@@ -349,7 +349,9 @@ $ curl -XPOST http://127.0.0.1:8080/realworld/Realworld/Call -d '{"name":"Jack"}
 
 请求路径的规则是，
 
-* /realworld/Realworld/Call -> service=realworld, method=Realworld.Call
+|           Path            |  service  |     method     |
+| ------------------------- | --------- | -------------- |
+| /realworld/Realworld/Call | realworld | Realworld.Call |
 
 如果后端服务成功处理了请求，HTTP 的状态码总是 200 OK。如果后端服务在处理过程中出错，[错误处理的最佳实践](rpc-error-handling.md)是由处理方法用 "github.com/micro/go-micro/v2/errors" 这个包里定义的函数生成自定义错误，例如：
 
@@ -383,10 +385,15 @@ $ curl -v -XPOST http://127.0.0.1:8080/realworld/Realworld/Call -d '{"name":"Jac
 
 也就是说，客户端的处理逻辑是，
 
-* 200 OK -> 按 Response 协议规格处理请求的响应
-* 其它 -> 按 Error 协议规格处理出错
-  - id 是错误的唯一ID
-  - detail 是错误的描述
+| HTTP status code |              处理逻辑              |
+| ---------------- | ---------------------------------- |
+| 200 OK           | 按 Response 协议规格处理请求的响应 |
+| 其它             | 按 Error 协议规格处理出错          |
+
+Error 协议规格
+
+* `id` 是错误的唯一ID，方便机器处理
+* `detail` 是错误的描述，方便人阅读
 
 服务端需要注意，code 只能填写[已知的 HTTP status codes](https://golang.org/pkg/net/http/#pkg-constants)
 
@@ -394,3 +401,16 @@ $ curl -v -XPOST http://127.0.0.1:8080/realworld/Realworld/Call -d '{"name":"Jac
 
 * 服务的接口协议更简洁，Response 只需要描述业务需要的字段
 * 错误的处理方式更自然，贴近 REST API 规范
+
+总结
+---
+
+这是 go-micro 的快速开始教程。利用 go-micro 微服务框架，你不需要写一行代码，就能获得一套成熟的生产可用微服务系统。用到的命令为，
+
+* `micro new` 生成骨架项目
+* `micro list services` 查看服务注册表
+* `micro get service <name>` 查看服务详情
+* `micro stats <name>` 查看服务状态
+* `micro call ...` 调用服务的接口
+* `micro publish` 给服务发异步消息
+* `micro api` 启动服务网关
