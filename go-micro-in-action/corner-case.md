@@ -95,7 +95,7 @@ type Response struct {
 }
 ```
 
-这样做会导致一个问题：如果字段值恰好是 `empty value`，那么转换成 JSON 之后，这个字段不会出现在结果中。JavaScript 代码里访问这个字段会 `undefined`，甚至会报错 `TypeError: Cannot read property 'x' of undefined`。
+如果这个结构体的某一个字段值恰好是 “empty value”，那么转换成 JSON 之后，这个字段不会出现在结果中。JavaScript 代码里访问这个字段会 `undefined`，甚至会报错 `TypeError: Cannot read property 'x' of undefined`。
 
 想在 JavaScript 里优雅的解决这个问题非常麻烦。可是在服务端去修复，则非常简单。
 
@@ -106,4 +106,9 @@ var jsonpbMarshaler = &jsonpb.Marshaler{
 	OrigName:     true,
 }
 ```
+
+服务端生成的 JSON 结果由 jsonpbMarshaler 控制，一旦这个 `EmitDefaults` 选项设置成 `true`，所有的响应 JSON 都会加上 “empty value” 字段。客户端可以按照常规方式访问它们。
+
+在 nano-kit/go-micro 仓库里已经做了这个修改。这样改的后果是，响应数据会增多，消耗更多的流量。应对的办法是，启用 HTTP Cache-Control 和 Compression。
+
 
