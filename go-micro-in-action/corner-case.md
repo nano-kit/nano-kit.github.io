@@ -1,5 +1,9 @@
-一些小发现
+一些边角问题
 ===
+
+这里记录在使用 go-micro 的过程中，遇到的一些边角问题。
+
+
 
 JSON: int64 类型
 ---
@@ -67,3 +71,39 @@ encoding/json 来做转换，就会遵循 Proto3 JSON Mapping 规范。这个规
     case int64, uint64:
 		w.write(fmt.Sprintf(`"%d"`, v.Interface()))
 ```
+
+
+JSON: omitempty
+---
+
+> The "omitempty" option specifies that the field should be omitted from the encoding if the field has an empty value, defined as false, 0, a nil pointer, a nil interface value, and any empty array, slice, map, or string.
+>
+> -- [encoding/json.Marshal](https://golang.org/pkg/encoding/json/#Marshal)
+
+由 Protobuf 生成的 Go 协议文件，会对结构体的每个字段都自动加上 omitempty
+
+```go
+type Response struct {
+	Msg                  string   `protobuf:"bytes,1,opt,name=msg,proto3" json:"msg,omitempty"`
+	NumInt32             int32    `protobuf:"varint,2,opt,name=num_int32,json=numInt32,proto3" json:"num_int32,omitempty"`
+	NumInt64             int64    `protobuf:"varint,3,opt,name=num_int64,json=numInt64,proto3" json:"num_int64,omitempty"`
+	NumFloat             float32  `protobuf:"fixed32,4,opt,name=num_float,json=numFloat,proto3" json:"num_float,omitempty"`
+	NumDouble            float64  `protobuf:"fixed64,5,opt,name=num_double,json=numDouble,proto3" json:"num_double,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+```
+
+这样做会导致一个问题：如果字段值恰好是 `empty value`，那么转换成 JSON 之后，这个字段不会出现在结果中。JavaScript 代码里访问这个字段会 `undefined`，甚至会报错 `TypeError: Cannot read property 'x' of undefined`。
+
+想在 JavaScript 里优雅的解决这个问题非常麻烦。可是在服务端去修复，则非常简单。
+
+```go
+var jsonpbMarshaler = &jsonpb.Marshaler{
+	EnumsAsInts:  false,
+	EmitDefaults: true, // convenient for js
+	OrigName:     true,
+}
+```
+
