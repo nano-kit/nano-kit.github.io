@@ -10,11 +10,11 @@
 安装开发工具
 ---
 
-我用的开发机是 MacOS v10.11.6 （OS X El Capitan），在这个计算机上，能安装的 Go 最高版本是 v1.14
+我用的开发机是 MacOS v10.11.6 （OS X El Capitan），在这个计算机上，能安装的 Go 最高版本是 v1.14。如果你用更高版本的 Go 也可以。
 
 > Go 1.14 is the last release that will run on macOS 10.11 El Capitan. Go 1.15 will require macOS 10.12 Sierra or later.
-
-https://golang.org/doc/go1.14#darwin
+>
+> -- [golang.org/doc/go1.14#darwin](https://golang.org/doc/go1.14#darwin)
 
 Go 安装好之后，有关的环境变量如下
 
@@ -60,7 +60,7 @@ GOGCCFLAGS="-fPIC -m64 -pthread -fno-caret-diagnostics -Qunused-arguments -fmess
 * 协议生成工具 `protoc-gen-micro` 和 `protoc-gen-go`
 * 项目生成工具 `micro`
 
-用 Protobuf 来定义服务 API 是开发过程中的最佳实践。协议生成工具能把 Protobuf 定义转换成 Go 代码，让项目直接使用。项目生成工具能生成新项目的骨架，不纠结目录安排和构建脚本，对新手非常友好。
+用 Protobuf 来定义服务 API 是开发过程中的最佳实践。协议生成工具能把 Protobuf 定义转换成 Go 代码，让项目直接使用。项目生成工具能生成新项目的骨架，不纠结目录结构和构建脚本，对新手非常友好。
 
 首先下载 go-micro 和 micro 的代码到本地目录，
 
@@ -69,7 +69,7 @@ git clone https://github.com/nano-kit/go-micro.git
 git clone https://github.com/nano-kit/micro.git
 ```
 
-注意，这里没有去 https://github.com/micro/micro 下载，原因是 go-micro 从 v3.0 开始进行商业化的大改变，代码演进变化剧烈，不利于我们自己的项目使用。本教程用的是我们自己独立维护的 v2 稳定版，基于上游的 Go Micro v2.9.1
+注意，这里没有去 https://github.com/micro/micro 下载，原因是 go-micro 从 v3.0 开始进行商业化的大改变，代码演进剧烈，不利于我们自己的项目使用。本教程用的是我们自己独立维护的 v2 稳定版，基于上游的 Go Micro v2.9.1
 
 安装 `micro` 和 `protoc-gen-micro`
 
@@ -78,7 +78,7 @@ cd micro && go install
 cd cmd/protoc-gen-micro && go install
 ```
 
-安装 `protoc-gen-go`
+安装 `protoc-gen-go`，必须用 v1.3.5
 
 ```
 cd $HOME; GO111MODULE=on go get github.com/golang/protobuf/protoc-gen-go@v1.3.5
@@ -89,8 +89,8 @@ cd $HOME; GO111MODULE=on go get github.com/golang/protobuf/protoc-gen-go@v1.3.5
 注意，安装 `protoc-gen-go` 的命令，必须先 cd 到 $HOME 下，否则 go get 会安装到当前所在项目的依赖里去。
 
 > to avoid accidentally modifying go.mod, people started suggesting more complex commands
-
-https://blog.golang.org/go116-module-changes
+>
+> -- [blog.golang.org/go116-module-changes](https://blog.golang.org/go116-module-changes)
 
 我们使用的是 protoc-gen-go@v1.3.5 ，新版的 `protoc-gen-go` 生成的 Go 代码要求使用最新的 google.golang.org/protobuf 而不是 github.com/golang/protobuf ，与 go-micro/v2 不能一起使用。
 
@@ -123,8 +123,8 @@ $ which go protoc protoc-gen-go protoc-gen-micro micro
 
 新项目启动，可以用 `micro new` 生成骨架。需要指定的参数，有
 
-* `--namespace` 服务的命名空间。建议一条业务线下的所有服务，用相同的命名空间，名称就用业务名
-* `--alias` 服务的短名。建议遵循服务的功能，登录服务可以命名为 login，订单服务可以命名为 order
+* `--namespace` 服务的命名空间。建议一条业务线下的所有服务，用相同的命名空间。这个命名空间的名称是业务名，例如电商业务 Shopify 可以是 com.shopify
+* `--alias` 服务的短名。建议取名遵循服务的功能，登录服务可以命名为 login，订单服务可以命名为 order
 * `项目目录` 会自动创建指定的目录，以及里面的源代码文件
 
 ```sh
@@ -190,8 +190,15 @@ message Message {
 }
 ```
 
-改动这个接口协议文件之后，可以用 `make proto` 生成新的 Go 代码。
+改动这个接口协议文件之后，可以用 `make proto` 重新生成 Go 代码。
 
+基于这个新项目，后续迭代开发的步骤一般是，
+
+1. 改进 Protobuf 接口协议，`make proto` 重新生成接口协议的 Go 代码
+1. 改进项目里的业务逻辑 Go 代码，`make build` 构建，生成微服务的可执行文件
+1. 启动可执行文件，测试
+1. 发布可执行文件，上线
+1. 回到 1
 
 
 
@@ -282,7 +289,7 @@ Response: {}
 * 在线时长（uptime）
 * 处理请求数量（requests）
 * 占用内存（memory）
-* 活跃线程（goroutine）数量（threads）
+* 活跃Go协程数量（threads）
 * 垃圾回收耗时（gc）
 * 处理出错数量（errors）
 
@@ -311,6 +318,12 @@ $ micro call com.example.service.realworld Realworld.Call '{"name":"Jack"}'
 }
 ```
 
+观察服务的终端窗口输出，会有处理这个请求的日志
+
+```
+2021-02-28 11:13:28  file=handler/realworld.go:17 level=info Received Realworld.Call request
+```
+
 ### 给服务发异步消息
 
 `micro publish` 的参数依次填写
@@ -323,7 +336,11 @@ $ micro publish com.example.service.realworld '{"say": "Hello!"}'
 ok
 ```
 
+观察服务的终端窗口输出，会有处理这个消息的日志
 
+```
+2021-02-28 11:15:08  file=subscriber/realworld.go:13 level=info Handler Received message: Hello!
+```
 
 
 
@@ -332,7 +349,7 @@ ok
 
 通常，客户端需要服务提供 REST API。按照[微服务的最佳实践](services-architecture.md)，客户端只用统一连接到服务网关（API Gateway），由服务网关自动发现后端微服务，转发请求。
 
-基于 go-micro 开发的微服务，与 micro api 网关配合一起使用，是最方便的。启动网关的命名是，
+基于 go-micro 开发的微服务，与 micro api 网关配合一起使用，是最方便的。启动网关的命令是，
 
 ```
 micro --auth_namespace com.example api --namespace com.example --type service
@@ -340,20 +357,20 @@ micro --auth_namespace com.example api --namespace com.example --type service
 
 启动的参数，指定了这个网关后端的服务都在 com.example.service 命名空间下。网关自己默认监听在 0.0.0.0:8080 这个地址。
 
-用 curl 测试网关，
+用 curl 测试网关，确认这个请求被成功转发到后端的微服务 `./realworld-service` 了。
 
 ```
 $ curl -XPOST http://127.0.0.1:8080/realworld/Realworld/Call -d '{"name":"Jack"}'
 {"msg":"Hello Jack"}
 ```
 
-请求路径的规则是，
+请求路径与后端服务的对应规则是，
 
 |           Path            |  service  |     method     |
 | ------------------------- | --------- | -------------- |
 | /realworld/Realworld/Call | realworld | Realworld.Call |
 
-如果后端服务成功处理了请求，HTTP 的状态码总是 200 OK。如果后端服务在处理过程中出错，[错误处理的最佳实践](rpc-error-handling.md)是由处理方法用 "github.com/micro/go-micro/v2/errors" 这个包里定义的函数生成自定义错误，例如：
+如果后端服务成功处理了请求，HTTP 的状态码总是 200 OK。如果后端服务在处理过程中出错，[错误处理的最佳实践](rpc-error-handling.md)是用 "github.com/micro/go-micro/v2/errors" 这个包里定义的函数生成自定义错误，例如：
 
 ```go
 
@@ -372,6 +389,8 @@ $ curl -XPOST http://127.0.0.1:8080/realworld/Realworld/Call -d '{"name":"Jack"}
     // ...
 
 ```
+
+向网关发请求，验证这些出错的场景，确认从网关成功接收到错误响应。错误响应里既有 HTTP 的（非 200 OK）状态码，又有错误详情。
 
 ```sh
 $ curl -v -XPOST http://127.0.0.1:8080/realworld/Realworld/Call -d '{"name":"Jacket", "age":201}'
@@ -405,7 +424,7 @@ Error 协议规格
 总结
 ---
 
-这是 go-micro 的快速开始教程。利用 go-micro 微服务框架，你不需要写一行代码，就能获得一套成熟的生产可用微服务系统。用到的命令为，
+这是 go-micro 的快速开始教程。利用 go-micro 微服务框架，你不需要写一行代码，就能获得一套*遵循最佳实践*的*成熟生产可用*的微服务系统。用到的命令为，
 
 * `micro new` 生成骨架项目
 * `micro list services` 查看服务注册表
