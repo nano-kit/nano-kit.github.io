@@ -81,7 +81,7 @@ cd cmd/protoc-gen-micro && go install
 安装 `protoc-gen-go`
 
 ```
-cd $HOME; GO111MODULE=on go get github.com/golang/protobuf/protoc-gen-go@v1.3.2
+cd $HOME; GO111MODULE=on go get github.com/golang/protobuf/protoc-gen-go@v1.3.5
 ```
 
 命令执行成功后，它们将被安装在 $GOPATH/bin/ 下。
@@ -92,7 +92,7 @@ cd $HOME; GO111MODULE=on go get github.com/golang/protobuf/protoc-gen-go@v1.3.2
 
 https://blog.golang.org/go116-module-changes
 
-我们使用的是 protoc-gen-go@v1.3.2 ，新版的 `protoc-gen-go` 生成的 Go 代码要求使用最新的 google.golang.org/protobuf 而不是 github.com/golang/protobuf ，与 go-micro/v2 不能一起使用。
+我们使用的是 protoc-gen-go@v1.3.5 ，新版的 `protoc-gen-go` 生成的 Go 代码要求使用最新的 google.golang.org/protobuf 而不是 github.com/golang/protobuf ，与 go-micro/v2 不能一起使用。
 
 查看刚才安装好的开发工具
 
