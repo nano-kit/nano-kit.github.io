@@ -27,7 +27,7 @@ message Response {
 在 handler 里，返回字段类型允许的最大数值，
 
 ```go
-    rsp.NumInt32 = math.MaxInt32
+	rsp.NumInt32 = math.MaxInt32
 	rsp.NumInt64 = math.MaxInt64
 	rsp.NumFloat = math.MaxFloat32
 	rsp.NumDouble = math.MaxFloat64
