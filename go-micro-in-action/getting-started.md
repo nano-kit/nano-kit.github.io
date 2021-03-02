@@ -1,4 +1,4 @@
-快速开始
+Getting Started 快速开始
 ===
 
 通过阅读本教程，你将学会
@@ -7,7 +7,7 @@
 * 用 micro api 网关导出服务 API
 * 验证和调试服务 API
 
-安装开发工具
+Install 安装开发工具
 ---
 
 我用的开发机是 MacOS v10.11.6 （OS X El Capitan），在这个计算机上，能安装的 Go 最高版本是 v1.14。如果你用更高版本的 Go 也可以。
@@ -118,7 +118,7 @@ $ which go protoc protoc-gen-go protoc-gen-micro micro
 
 
 
-生成骨架项目
+Generate 生成骨架项目
 ---
 
 新项目启动，可以用 `micro new` 生成骨架。需要指定的参数，有
@@ -202,12 +202,12 @@ message Message {
 
 
 
-把玩第一个微服务
+Play 把玩第一个微服务
 ---
 
 保持 `./realworld-service` 在一个终端窗口中运行，我们打开另一个终端窗口来观察这个服务的特性。
 
-### 查看服务注册表
+### List 查看服务注册表
 
 ```sh
 $ micro list services
@@ -219,7 +219,7 @@ micro.http.broker
 
 注意，`micro.http.broker` 是由 go-micro/broker 悄悄注册的，用于消息投递。在[异步消息](asynchronous-messaging.md)这一章节里有详细解释。
 
-### 查看服务详情
+### Get 查看服务详情
 
 服务的详细信息有
 
@@ -279,7 +279,7 @@ Response: {}
 
 ```
 
-### 查看服务状态
+### Stats 查看服务状态
 
 服务的运行状态有
 
@@ -303,7 +303,7 @@ node		address:port		started	uptime	requests	memory	threads	gc	errors
 com.example.service.realworld-f653af63-1467-4379-a990-3dd51cad0e30		192.168.0.102:56203		Feb 27 09:47:18	44m37s	11	2.22mb	25	2.304788ms	0
 ```
 
-### 调用服务的接口
+### Call 调用服务的接口
 
 `micro call` 的参数依次填写
 
@@ -324,7 +324,7 @@ $ micro call com.example.service.realworld Realworld.Call '{"name":"Jack"}'
 2021-02-28 11:13:28  file=handler/realworld.go:17 level=info Received Realworld.Call request
 ```
 
-### 给服务发异步消息
+### Publish 给服务发异步消息
 
 `micro publish` 的参数依次填写
 
@@ -344,7 +344,7 @@ ok
 
 
 
-用 micro api 网关导出服务 API
+Export API 用 micro api 网关导出服务 API
 ---
 
 通常，客户端需要服务提供 REST API。按照[微服务的最佳实践](services-architecture.md)，客户端只用统一连接到服务网关（API Gateway），由服务网关自动发现后端微服务，转发请求。
@@ -421,7 +421,7 @@ Error 协议规格
 * 服务的接口协议更简洁，Response 只需要描述业务需要的字段
 * 错误的处理方式更自然，贴近 REST API 规范
 
-总结
+Summary 总结
 ---
 
 这是 go-micro 的快速开始教程。利用 go-micro 微服务框架，你不需要写一行代码，就能获得一套*遵循最佳实践*的*成熟生产可用*的微服务系统。用到的命令为，
