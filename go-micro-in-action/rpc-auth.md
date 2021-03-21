@@ -293,3 +293,14 @@ OAuth 与第三方账号集成
 ---
 
 <TODO>
+
+
+Appendix
+---
+
+```
+$ micro --store sqlite --auth jwt auth
+$ micro login --namespace go.micro default password
+$ micro auth create account --secret 123456 --scopes service api-gate
+$ MICRO_LOG_LEVEL=debug micro --auth service --auth_id api-gate --auth_secret 123456 api --namespace com.example --type service
+```
