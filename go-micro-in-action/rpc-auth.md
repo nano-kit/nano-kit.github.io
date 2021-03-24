@@ -283,16 +283,25 @@ Rules 权限检查的算法
 过程
 
 1. 依次检查规则列表里每条规则的 Type, Name, Endpoint 只保留与请求资源相关的，
-2. 保留规则按优先级从大到小排序，
-3. 对访问范围是任何人（包括匿名用户）的规则，检查是否放行，
-4. 对访问范围是任何具名用户的规则，检查是否放行，
-5. 对访问范围在请求用户 Scopes 里的规则，检查是否放行，
-6. 直到没有任何规则适用，则拒绝。
+1. 保留规则按优先级从大到小排序，
+1. 对访问范围是任何人（包括匿名用户）的规则，检查是否放行，
+1. 对访问范围是任何具名用户的规则，检查是否放行，
+1. 对访问范围在请求用户 Scopes 里的规则，检查是否放行，
+1. 直到没有任何规则适用，则拒绝。
 
 OAuth 与第三方账号集成
 ---
 
-<TODO>
+项目 `realworld-example-app` [这里](https://github.com/nano-kit/realworld-example-app/blob/80aea6dd6d1d8eb48d6774eed93f2c081a465a3a/cmd/websocket-server/main.go#L180)有一个例子，将 go-micro auth 与 GitHub OAuth 集成起来，关键步骤有
+
+1. 按 GitHub OAuth [文档](https://docs.github.com/en/developers/apps/authorizing-oauth-apps)接入
+1. 根据 GitHub User Profile 生成 micro auth 系统内的账号
+1. 获取账号的 Refresh Token，保存在客户端
+1. 客户端用 Refresh Token 获取 Access Token，调用 API
+
+
+
+
 
 
 Appendix
@@ -303,4 +312,12 @@ $ micro --store sqlite --auth jwt auth
 $ micro login --namespace go.micro default password
 $ micro auth create account --secret 123456 --scopes service api-gate
 $ MICRO_LOG_LEVEL=debug micro --auth service --auth_id api-gate --auth_secret 123456 api --namespace com.example --type service
+$ micro login --namespace com.example default password
+$ micro auth list rules
+ID				Scope			Access		Resource								Priority
+realworld-stream		<public>		GRANTED		service:com.example.service.realworld:Realworld.Stream			100
+realworld-pingpong		<public>		GRANTED		service:com.example.service.realworld:Realworld.PingPong		100
+clubhouse-subscribe		<public>		GRANTED		service:com.example.service.realworld:Clubhouse.Subscribe		100
+any-account			*			GRANTED		*:*:*									2
+deny-public			<public>		DENIED		*:*:*									1
 ```
