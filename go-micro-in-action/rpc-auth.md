@@ -295,17 +295,34 @@ OAuth 与第三方账号集成
 项目 `realworld-example-app` [这里](https://github.com/nano-kit/realworld-example-app/blob/80aea6dd6d1d8eb48d6774eed93f2c081a465a3a/cmd/websocket-server/main.go#L180)有一个例子，将 go-micro auth 与 GitHub OAuth 集成起来，关键步骤有
 
 1. 按 GitHub OAuth [文档](https://docs.github.com/en/developers/apps/authorizing-oauth-apps)接入
-1. 根据 GitHub User Profile 生成 micro auth 系统内的账号
-1. 获取账号的 Refresh Token，保存在客户端
+1. 根据 GitHub User Profile 生成 micro auth 系统内的账号，这个账号采用一个随机生成的密码
+1. 根据账号和密码，获取账号的 Refresh Token，保存在客户端
 1. 客户端用 Refresh Token 获取 Access Token，调用 API
 
+Sign up 新用户注册
+---
 
+由于要保证账号的实名性，不会被恶意大量注册，我们自己去实现新用户注册的场景并不常见。新用户注册的流程是
 
+1. 引导用户进入注册页
+1. 在真人/实名验证通过后，收集用户的账号名和密码，以及找回密码的方式，生成 micro auth 系统内的账号
+1. 根据账号和密码，获取账号的 Refresh Token，保存在客户端
+1. 客户端用 Refresh Token 获取 Access Token，调用 API
 
+Practice 验证和调试具有认证机制的服务 API
+---
 
+限于篇幅，用一篇单独的[教程](rpc-auth-demo.md)。
+
+Summary 总结
+---
+
+这是 go-micro 的内建认证机制的教程。只有具备认证授权机制的微服务框架，才具备实用价值。一旦我们能在 API 处理过程中拿到用户的身份，就可以做配额、计费等等。另外，服务间的身份认证（service account）也很有用：关键服务的访问权限不再需要用 IP 地址白名单控制，用服务身份是更加云原生的做法。
 
 Appendix
 ---
+
+附录收集了一些常用的命令，用于快速启动认证服务 go.micro.auth 和网关服务 go.micro.api
 
 ```
 $ micro --store sqlite --auth jwt auth
