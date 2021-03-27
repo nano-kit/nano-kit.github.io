@@ -318,23 +318,3 @@ Summary 总结
 ---
 
 这是 go-micro 的内建认证机制的教程。只有具备认证授权机制的微服务框架，才有实用价值。一旦我们能在 API 处理过程中拿到用户的身份，就可以做配额、计费等等。另外，服务间的身份认证（Service Accounts）也很有用：关键服务的访问权限不再需要用 IP 地址白名单控制，用服务身份是更加云原生（Cloud Native）的做法。
-
-Appendix
----
-
-附录收集了一些常用的命令，用于快速启动认证服务 go.micro.auth 和网关服务 go.micro.api
-
-```
-$ micro --store sqlite --auth jwt auth
-$ micro login --namespace go.micro default password
-$ micro auth create account --secret 123456 --scopes service api-gate
-$ MICRO_LOG_LEVEL=debug micro --auth service --auth_id api-gate --auth_secret 123456 api --namespace com.example --type service
-$ micro login --namespace com.example default password
-$ micro auth list rules
-ID				Scope			Access		Resource								Priority
-realworld-stream		<public>		GRANTED		service:com.example.service.realworld:Realworld.Stream			100
-realworld-pingpong		<public>		GRANTED		service:com.example.service.realworld:Realworld.PingPong		100
-clubhouse-subscribe		<public>		GRANTED		service:com.example.service.realworld:Clubhouse.Subscribe		100
-any-account			*			GRANTED		*:*:*									2
-deny-public			<public>		DENIED		*:*:*									1
-```
