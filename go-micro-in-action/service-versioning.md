@@ -30,7 +30,7 @@ go-micro client 调用时，用 FilterVersion 指定目标
 RPC Resolver
 ---
 
-服务网关按如下规则路由到服务端点
+服务网关按如下规则路由请求到服务端点
 
 假设后端服务名 (com.example.service.realworld) 和接口名 (Greeter.Hello)
 
